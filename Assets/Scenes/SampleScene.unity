@@ -617,6 +617,23 @@ MonoBehaviour:
       m_Action: Dash
       m_Flags: 0
     m_Flags: 0
+  eKeyAction:
+    m_Name: E Key
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 8062a77b-9754-41a7-a0c8-22cbb366caef
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings:
+    - m_Name: 
+      m_Id: 1dd55bd3-7ae2-4f0d-87c9-a31cead13ff3
+      m_Path: <Keyboard>/e
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: E Key
+      m_Flags: 0
+    m_Flags: 0
   axis: {x: 0, y: 0}
   isSpaceKeyPressing: 0
 --- !u!4 &1124136054

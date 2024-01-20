@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class PlayerController : SingletonMonoBehaviour<PlayerController>
 {
+    [SerializeField] private PlayerActionManager playerActionManager;
     [SerializeField] private int dashSpeed;
     [SerializeField] private int speed;
     private bool _canDash;
@@ -16,11 +17,25 @@ public class PlayerController : SingletonMonoBehaviour<PlayerController>
         _canDash = true;
     }
 
-    public async UniTask Behaviour(CancellationToken gameCt)
+    public async UniTask Behaviour(CancellationToken ct)
     {
         var mergedCt =
-            CancellationTokenSource.CreateLinkedTokenSource(gameCt, gameObject.GetCancellationTokenOnDestroy()).Token;
-        await UniTaskAsyncEnumerable.EveryUpdate().ForEachAwaitAsync(async _ =>
+            CancellationTokenSource.CreateLinkedTokenSource(ct, gameObject.GetCancellationTokenOnDestroy()).Token;
+
+        await MoveControlAsync(mergedCt);
+    }
+
+    private async UniTask InvokeAstralProjectionAsync(CancellationToken ct)
+    {
+        InputProvider.Instance.EKeyOnClickAsyncEnumerable(ct).ForEachAsync(_ =>
+        {
+            //実装もろもろ
+        }, cancellationToken: ct);
+    }
+
+    private async UniTask MoveControlAsync(CancellationToken ct)
+    {
+        await UniTaskAsyncEnumerable.EveryUpdate().ForEachAsync(_ =>
         {
             var axis = InputProvider.Instance.axis;
             if (axis.magnitude == 0) return;
@@ -36,8 +51,7 @@ public class PlayerController : SingletonMonoBehaviour<PlayerController>
             {
                 if (_wasSpaceKeyPressingLastFrame)
                 {
-                    _canDash = false;
-                    BanDashAsync(mergedCt).Forget();
+                    BanDashAsync(ct).Forget();
                 }
                 
                 moveVector = vector * speed / 100f;
@@ -55,14 +69,14 @@ public class PlayerController : SingletonMonoBehaviour<PlayerController>
             position += moveVector3d;
             go.transform.localPosition = position;
             
-        },mergedCt);
-        
+        },ct);
     }
 
-    private async UniTask BanDashAsync(CancellationToken gameCt)
+    private async UniTask BanDashAsync(CancellationToken ct)
     {
+        _canDash = false;
         _wasSpaceKeyPressingLastFrame = false;
-        await UniTask.Delay(TimeSpan.FromSeconds(1),cancellationToken:gameCt);
+        await UniTask.Delay(TimeSpan.FromSeconds(1),cancellationToken:ct);
         _canDash = true;
     }
 }
