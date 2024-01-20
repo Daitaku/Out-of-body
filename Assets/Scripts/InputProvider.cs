@@ -2,31 +2,31 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using Cysharp.Threading.Tasks.Linq;
 using UnityEngine;
-using UnityEngine.InputSystem;
+using UnityEngine.AddressableAssets;
 
-public class InputProvider : SingletonMonoBehaviour<InputProvider>
+public static class InputProvider
 {
-    [SerializeField] private InputAction moveAction;
-    [SerializeField] private InputAction dashAction;
-    [SerializeField] private InputAction eKeyAction;
-    [HideInInspector] public Vector2 axis;
-    [HideInInspector] public bool isSpaceKeyPressing;
+    public static Vector2 Axis;
+    public static bool IsSpaceKeyPressing;
+    private static GameData _data;
 
-    public void Init()
+    public static async UniTask Init(CancellationToken ct = default)
     {
-        axis = Vector2.zero;
-
-        moveAction.performed += context => axis = context.ReadValue<Vector2>();
-        moveAction.canceled += context => axis = context.ReadValue<Vector2>();
-
-        dashAction.performed += _ => isSpaceKeyPressing = true;
-        dashAction.canceled += _ => isSpaceKeyPressing = false;
+        _data = await Addressables.LoadAssetAsync<GameData>("Assets/Settings/GameData.asset").WithCancellation(ct);
         
-        moveAction.Enable();
-        dashAction.Enable();
+        Axis = Vector2.zero;
+        
+        _data.moveAction.performed += context => Axis = context.ReadValue<Vector2>();
+        _data.moveAction.canceled += context => Axis = context.ReadValue<Vector2>();
+
+        _data.dashAction.performed += _ => IsSpaceKeyPressing = true;
+        _data.dashAction.canceled += _ => IsSpaceKeyPressing = false;
+        
+        _data.moveAction.Enable();
+        _data.dashAction.Enable();
     }
 
-    public IUniTaskAsyncEnumerable<AsyncUnit> EKeyOnClickAsyncEnumerable(CancellationToken gameCt)
+    public static IUniTaskAsyncEnumerable<AsyncUnit> SkillKeyOnClickAsyncEnumerable(CancellationToken gameCt)
     {
         return UniTaskAsyncEnumerable.Create<AsyncUnit>(async (writer,ct) =>
         {
@@ -34,7 +34,7 @@ public class InputProvider : SingletonMonoBehaviour<InputProvider>
             while (true)
             {
                 await writer.YieldAsync(new AsyncUnit());
-                await UniTask.WaitUntil(() => eKeyAction.WasPerformedThisFrame(), cancellationToken: mergedCt);
+                await UniTask.WaitUntil(() => _data.skillAction.WasPerformedThisFrame(), cancellationToken: mergedCt);
                 if (mergedCt.IsCancellationRequested)
                 {
                     return;

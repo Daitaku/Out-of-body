@@ -5,10 +5,10 @@ using UnityEngine;
 public static class GameManager
 {
     [RuntimeInitializeOnLoadMethod]
-    private static void Init()
+    private static async UniTask Init()
     {
-        InputProvider.Instance.Init();
         PlayerController.Instance.Init();
+        await InputProvider.Init();
         Progress().Forget();
     }
 

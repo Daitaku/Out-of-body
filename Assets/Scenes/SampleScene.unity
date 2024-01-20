@@ -617,21 +617,21 @@ MonoBehaviour:
       m_Action: Dash
       m_Flags: 0
     m_Flags: 0
-  eKeyAction:
-    m_Name: E Key
+  skillKeyAction:
+    m_Name: Skill Key
     m_Type: 0
     m_ExpectedControlType: 
-    m_Id: 8062a77b-9754-41a7-a0c8-22cbb366caef
+    m_Id: e2d00b90-10ce-4601-98b1-b8a6ed7f81ad
     m_Processors: 
     m_Interactions: 
     m_SingletonActionBindings:
     - m_Name: 
-      m_Id: 1dd55bd3-7ae2-4f0d-87c9-a31cead13ff3
+      m_Id: 77324d09-4383-4c31-bb59-c89cab080a3e
       m_Path: <Keyboard>/e
       m_Interactions: 
       m_Processors: 
       m_Groups: 
-      m_Action: E Key
+      m_Action: Skill Key
       m_Flags: 0
     m_Flags: 0
   axis: {x: 0, y: 0}
@@ -733,6 +733,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 715b1ef74a3c646308f2c3fd13ddd646, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerActionManager: {fileID: 0}
   dashSpeed: 5
   speed: 2
 --- !u!136 &1327138948

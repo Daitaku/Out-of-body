@@ -27,7 +27,7 @@ public class PlayerController : SingletonMonoBehaviour<PlayerController>
 
     private async UniTask InvokeAstralProjectionAsync(CancellationToken ct)
     {
-        InputProvider.Instance.EKeyOnClickAsyncEnumerable(ct).ForEachAsync(_ =>
+        InputProvider.SkillKeyOnClickAsyncEnumerable(ct).ForEachAsync(_ =>
         {
             //実装もろもろ
         }, cancellationToken: ct);
@@ -37,12 +37,12 @@ public class PlayerController : SingletonMonoBehaviour<PlayerController>
     {
         await UniTaskAsyncEnumerable.EveryUpdate().ForEachAsync(_ =>
         {
-            var axis = InputProvider.Instance.axis;
+            var axis = InputProvider.Axis;
             if (axis.magnitude == 0) return;
             var vector = axis / axis.magnitude;
             
             Vector2 moveVector;
-            if (InputProvider.Instance.isSpaceKeyPressing && _canDash)
+            if (InputProvider.IsSpaceKeyPressing && _canDash)
             {
                 moveVector = vector * dashSpeed / 100f;
                 _wasSpaceKeyPressingLastFrame = true;
